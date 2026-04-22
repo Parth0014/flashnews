@@ -100,7 +100,7 @@ class NewsApiRepository implements NewsRepository {
 
     String normalizeContent(String? value) {
       if (value == null) return '';
-      return value.replaceAll(RegExp(r'\s*\[\+\d+\schars\]\s*4'), '').trim();
+      return value.replaceAll(RegExp(r'\s*\[\+\d+\schars\]\s*$'), '').trim();
     }
 
     return rawArticles
