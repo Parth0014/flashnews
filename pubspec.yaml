@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.2.2
   shared_preferences: ^2.3.2
+  share_plus: ^10.0.3
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +48,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -88,3 +90,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: assets/branding/flashnews_launcher.png
+    background_color: "#1B6BFF"
+    theme_color: "#1B6BFF"
+  windows:
+    generate: false
+  macos:
+    generate: false
+  image_path: assets/branding/flashnews_launcher.png
+  adaptive_icon_background: "#1B6BFF"
+  adaptive_icon_foreground: assets/branding/flashnews_launcher.png
+  remove_alpha_ios: true
