@@ -98,6 +98,11 @@ class NewsApiRepository implements NewsRepository {
 
     final rawArticles = (payload['articles'] as List<dynamic>? ?? <dynamic>[]);
 
+    String normalizeContent(String? value) {
+      if (value == null) return '';
+      return value.replaceAll(RegExp(r'\s*\[\+\d+\schars\]\s*4'), '').trim();
+    }
+
     return rawArticles
         .whereType<Map<String, dynamic>>()
         .where(
@@ -115,9 +120,21 @@ class NewsApiRepository implements NewsRepository {
             publishedAt:
                 DateTime.tryParse(item['publishedAt'] as String? ?? '') ??
                 DateTime.now(),
-            summary:
-                (item['description'] as String?) ?? 'No summary available.',
+            summary: (() {
+              final description = ((item['description'] as String?) ?? '')
+                  .trim();
+              final content = normalizeContent(item['content'] as String?);
+              if (description.isNotEmpty && content.isNotEmpty) {
+                return '$description\n\n$content';
+              }
+              if (description.isNotEmpty) return description;
+              if (content.isNotEmpty) return content;
+              return 'No summary available.';
+            })(),
             category: category,
+            fullContent: normalizeContent(item['content'] as String?),
+            url: (item['url'] as String?) ?? '',
+            author: (item['author'] as String?) ?? '',
             imageUrl: (item['urlToImage'] as String?) ?? '',
           ),
         )

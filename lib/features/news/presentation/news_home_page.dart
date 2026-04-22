@@ -582,12 +582,22 @@ class _NewsHomePageState extends State<NewsHomePage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Close'),
-                  ),
+                Row(
+                  children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _showFullInformation(article, isDesktop);
+                      },
+                      icon: const Icon(Icons.article_outlined, size: 18),
+                      label: const Text('Full Information'),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Close'),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -659,12 +669,92 @@ class _NewsHomePageState extends State<NewsHomePage> {
     final text = [
       article.title,
       '',
-      article.summary,
+      article.fullContent?.trim().isNotEmpty == true
+          ? article.fullContent!
+          : article.summary,
       '',
       'Source: ${article.source}',
+      if (article.author?.trim().isNotEmpty == true)
+        'Author: ${article.author}',
+      if (article.url?.trim().isNotEmpty == true) article.url!,
     ].join('\n');
 
     await Share.share(text, subject: article.title);
+  }
+
+  void _showFullInformation(Article article, bool isDesktop) {
+    final body = (article.fullContent?.trim().isNotEmpty == true)
+        ? article.fullContent!
+        : article.summary;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isDesktop ? 760 : 560,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 8, 18, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    article.title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      Text(
+                        'Source: ${article.source}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        'Published: ${_relativeTime(article.publishedAt)}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      if (article.author?.trim().isNotEmpty == true)
+                        Text(
+                          'Author: ${article.author}',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        body,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.copyWith(height: 1.5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (article.url?.trim().isNotEmpty == true)
+                    SelectableText(
+                      article.url!,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.blue),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _showBookmarksSheet() async {

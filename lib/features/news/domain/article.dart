@@ -5,6 +5,9 @@ class Article {
     required this.publishedAt,
     required this.summary,
     required this.category,
+    this.fullContent,
+    this.url,
+    this.author,
     this.imageUrl,
   });
 
@@ -13,6 +16,9 @@ class Article {
   final DateTime publishedAt;
   final String summary;
   final String category;
+  final String? fullContent;
+  final String? url;
+  final String? author;
   final String? imageUrl;
 
   factory Article.fromJson(Map<String, dynamic> json) {
@@ -24,6 +30,9 @@ class Article {
           DateTime.now(),
       summary: (json['summary'] as String?) ?? 'No summary available.',
       category: (json['category'] as String?) ?? 'general',
+      fullContent: json['fullContent'] as String?,
+      url: json['url'] as String?,
+      author: json['author'] as String?,
       imageUrl: json['imageUrl'] as String?,
     );
   }
@@ -35,6 +44,9 @@ class Article {
       'publishedAt': publishedAt.toIso8601String(),
       'summary': summary,
       'category': category,
+      'fullContent': fullContent,
+      'url': url,
+      'author': author,
       'imageUrl': imageUrl,
     };
   }
